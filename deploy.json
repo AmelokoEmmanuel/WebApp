@@ -1,0 +1,63 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "WebApp-Name": {
+            "type": "string",
+            "metadata": {
+                "description": "Enter WebApp Name"
+            }
+        },
+        "AppService-Plan": {
+            "type": "string",
+            "metadata": {
+                "description": "Enter Name of AppService Plan"
+            }
+        },
+        "Storage-Name": {
+            "type": "string",
+            "metadata": {
+                "description": "Enter Name of Storage"
+            }
+        }
+    },
+    "functions": [],
+    "variables": {},
+    "resources": [
+        {
+            "name": "[parameters('WebApp-Name')]",
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2022-09-01",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/',parameters('AppService-Plan'))]": "Resource",
+                "displayName": "[parameters('WebApp-Name')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', parameters('AppService-Plan'))]"
+            ],
+            "properties": {
+                "name": "[parameters('WebApp-Name')]",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms',parameters('AppService-Plan'))]"
+            }
+        },
+        {
+            "name": "[parameters('AppService-Plan')]",
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2022-09-01",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "F1",
+                "capacity": 1
+            },
+            "tags": {
+                "displayName": "[parameters('AppService-Plan')]"
+            },
+            "properties": {
+                "name": "[parameters('AppService-Plan')]"
+            }
+        }
+      
+    ],
+    "outputs": {}
+}
